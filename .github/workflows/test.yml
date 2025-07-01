@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -24,8 +25,8 @@ jobs:
       - name: Show Forge version
         run: forge --version
 
-      - name: Install dependencies (lib/)
-        run: forge install
+      - name: Install forge-std
+        run: forge install foundry-rs/forge-std
 
       - name: Build contracts
         run: forge build
