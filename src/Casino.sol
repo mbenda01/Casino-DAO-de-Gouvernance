@@ -31,6 +31,10 @@ contract Casino is VRFConsumerBaseV2, ReentrancyGuard, Pausable, Ownable {
     event BetPlaced(uint256 indexed requestId, address indexed player, uint256 amount, uint8 choice);
     event BetResolved(uint256 indexed requestId, address indexed player, bool win, uint256 payout, uint256 bonus);
 
+    // Error 
+    error IncorrectChoice();
+    error InvalidBetAmount(uint256 min, uint256 max);
+
     // Configuration Chainlink VRF
     VRFCoordinatorV2Interface public vrfCoordinator;
     uint64 public subscriptionId;
@@ -76,8 +80,8 @@ contract Casino is VRFConsumerBaseV2, ReentrancyGuard, Pausable, Ownable {
      */
 
     function placeBet(uint8 choice) external payable whenNotPaused nonReentrant {
-        require(msg.value >= minBet && msg.value <= maxBet, "Invalid bet amount");
-        require(choice == 0 || choice == 1, "Choice must be 0 or 1");
+        require(msg.value >= minBet && msg.value <= maxBet, InvalidBetAmount(minBet, maxBet));
+        require(choice == 0 || choice == 1, IncorrectChoice());
 
         uint256 requestId = vrfCoordinator.requestRandomWords(
             keyHash,
